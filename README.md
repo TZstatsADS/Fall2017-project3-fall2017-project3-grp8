@@ -1,6 +1,6 @@
 Tasks (week Oct 19 - Oct 25):
 
-Shiqi Duan: extract features using GIST, HOG2x2, and HOG3x3. Train Logistic Regression classifier
+Shiqi Duan: extract features using GIST, and HOG. Train Logistic Regression classifier
 
 Jordan Leung: Xgboost classier
 
@@ -10,9 +10,9 @@ Peter Li: GBM classifier and neural network (try)
 
 Stephanie Park: Random Forest classifier
 
-Note: there are four features SIFT, GIST, HOG2x2, and HOG3x3. Each person has to train their model on the four features. That means you should have four models: SIFT+classifier, GIST+classifier, HOG2x2+classifier, and HOG3x3+classifier. 
+Note: there are three features SIFT, GIST, and HOG. Each person has to train their model on the three features. That means you should have three models: SIFT+classifier, GIST+classifier, and HOG+classifier. 
 
-During training, need to use cross-validation (remember to set seed when randomly splitting the dataset into K-folds). You need to tune the parameters in the classifiers to achieve the smallest CV-training error and relatively short training time. Once you have got the best parameters for your model. Then you train the classifier on the whole training dataset to get the training time T and training error E. Remember to record them.
+During training, need to use cross-validation (remember to set seed when randomly splitting the dataset into K-folds). You need to tune the parameters in the classifiers to achieve the smallest CV-training error. Once you have got the best parameters for your model. Then you train the classifier on the whole training dataset to get the training time T and training error E. Remember to record them.
 
 The main.R in doc and some .R files in lib can be used as references when you train your classifiers.
 
