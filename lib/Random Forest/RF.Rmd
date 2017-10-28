@@ -1,0 +1,124 @@
+ ---
+title: "Project 3 - "
+author: "Stephanie Park"
+date: "October 24, 2016"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+### Load libraries
+```{r}
+if(!require("randomForest")){
+  install.packages("randomForest")
+}
+if(!require("caret")){
+  install.packages("caret")
+}
+if(!require("e1071")){
+  install.packages("e1071")
+}
+ if(!require("ggplot2")){ 
+ }
+
+library(randomForest)
+library(randomForest)
+library(caret)
+library(e1071)
+library(knitr)
+library(ggplot2)
+```
+
+
+#### Controls
+
+```{r}
+run.cv=TRUE # run cross-validation on the training set 
+K <- 5 # number of CV folds
+run.feature.train = TRUE # process features for training set 
+run.test = TRUE # run evaluation on an independent test set 
+run.feature.test = TRUE # process features for test set
+proportion = 0.75 # training set proportion
+seed = 123 # set seed
+```
+
+#### Import and split the data into test and training set (75% training set and 25% test set)
+
+```{r}
+setwd("/Users/Spark/Directory/Fall2017-project3-fall2017-project3-grp8/lib")
+features <- read.csv("../data/our_data/training_set/features_GIST.csv",header=FALSE,as.is=TRUE)
+label.train <- read.csv("../data/our_data/training_set/label_train.csv",header=TRUE,as.is=TRUE)[,-1]
+
+#label.train <- as.vector(c(rep(0,1500), rep(1,1500)))
+
+n <- dim(features)[1]
+set.seed(seed)
+index <- sample(n, n*proportion)
+
+x.train <- features[index,]
+y.train <- label.train[index]
+
+x.test <- features[-index,]
+y.test <- label.train[-index]
+```
+
+
+#### Model selection with cross-validation: choosing different values of training model parameters
+```{r}
+m <- length(y.train)
+m.fold <- floor(m/K)
+set.seed(seed)
+s <- sample(rep(1:K, c(rep(m.fold, K-1), m-(K-1)*m.fold))) 
+cv.error <- rep(NA, K)
+
+for (i in 1:K){
+  train.data <- x.train[s != i,]
+  train.label <- y.train[s != i]
+  test.data <- x.train[s == i,]
+  test.label <- y.train[s == i]
+  
+  fit <- tuneRF(train.data, as.factor(train.label), doBest = TRUE) 
+  pred <- predict(fit, test.data)
+  cv.error[i] <- mean(pred != test.label)
+}
+
+```
+
+
+
+#### Evaluation
+```{r}
+# Visualize Cross Validation
+ggplot(data = data.frame(cv.error)) + geom_point(aes(x = 1:K, y = cv.error), color = "blue")
+
+# Get the lowest error rate of cross validation
+best <- which.min(cv.error)
+
+# Get the 'mtry' for trained model
+system.time(fit.1 <- tuneRF(x.train[s != best,], as.factor(y.train[s != best]), ntree = 23, doBest = TRUE))
+
+save(fit.1, file="./RFs_fit_GIST.RData")
+```
+
+#### Prediction
+```{r}
+# Training error
+train_pred <- predict(fit.1, x.train)
+train_error <- mean(train_pred != y.train)
+train_error
+
+# Test error
+test_pred <- predict(fit.1, x.test)
+test_error <- mean(test_pred != y.test)
+test_error
+```
+
+
+
+
+
+
+
+
+
+
