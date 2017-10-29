@@ -55,7 +55,7 @@ s <- sample(rep(1:K, c(rep(m.fold, K-1), m-(K-1)*m.fold)))
 cv.error <- rep(NA, K)
 opt.mtry <- rep(NA,K) # optimal mtry for certain fold training data
 
-n_trees <- seq(500,800,100)
+n_trees <- seq(500,1000,100)
 cv.ntree.error <- rep(NA, length(n_trees)) # lowest cv-error for certain ntree value
 best.ntree.mtry <- rep(NA, length(n_trees)) # best mtry for certain ntree value
 
@@ -67,7 +67,8 @@ for (j in 1:length(n_trees)){
     test.label <- y.train[s == i]
   
     fit <- tuneRF(train.data, as.factor(train.label),
-                mtreeTry = n_trees[j], doBest = TRUE)
+                mtreeTry = n_trees[j], 
+                doBest = TRUE)
  
     # Get the 'mtry' for trained model
     opt.mtry[i] <- fit$mtry
@@ -86,15 +87,15 @@ ggplot(data = data.frame(cv.ntree.error)) + geom_point(aes(x = n_trees, y = cv.n
 
 # Get the best parameters
 best <- which.min(cv.ntree.error)
-best.ntree <- n_trees[best]
-best.mtry <- best.ntree.mtry[best]
+best.ntree <- n_trees[best] # 900
+best.mtry <- best.ntree.mtry[best] #14
 
 # Training error
 tm_train<-system.time(fit.1 <- randomForest(x.train, as.factor(y.train), 
                                   mtry = best.mtry, ntree = best.ntree, importance = TRUE))
 
 train_error <- mean(fit.1$predicted != y.train)
-train_error #0.2493
+train_error #0.2488
 save(fit.1, file="../output/RFs_fit_HOG.RData")
 
 # Test error
@@ -104,5 +105,5 @@ test_error #0.2506
 save(test_pred, file="../output/pred_test_RFs_HOG.RData")
 
 ### Summarize Running Time
-cat("Time for training model=", tm_train[1], "s \n") # 27.032s
-cat("Time for testing model=", tm_test[1], "s \n") # 0.12s
+cat("Time for training model=", tm_train[1], "s \n") # 34.427s
+cat("Time for testing model=", tm_test[1], "s \n") # 0.149s
