@@ -96,7 +96,7 @@ x.test <- X[-index,]
 y.test <- y[-index]
 
 # Choosing between different values of maximum interation for Logistic
-iter_values <- 8:20
+iter_values <- seq(10,30,1)
 err_cv <- array(dim=c(length(iter_values), 2))
 K <- 5  # number of CV folds
 for(k in 1:length(iter_values)){
@@ -114,28 +114,28 @@ arrows(iter_values, err_cv[,1]-err_cv[,2],iter_values, err_cv[,1]+err_cv[,2],
        length=0.1, angle=90, code=3)
 
 # Choose the best parameter value
-min(err_cv[,1])  # 0.273333
-iter_best <- iter_values[which.min(err_cv[,1])]
-par_best <- list(maxit=iter_best) # maxit=15 is the best
+min(err_cv[,1])  # 0.2733
+iter_best <- iter_values[which.min(err_cv[,1] + err_cv[,2])]
+par_best <- list(maxit=iter_best) # maxit=13 is the best
 
 # train the model with the entire training set
 tm_train <- system.time(fit_train <- train.lg(x.train, y.train, par_best))
 pred_train <- test.lg(fit_train, x.train)
 train.error <- mean(pred_train != y.train)
-train.error
+train.error #0.2364
 save(fit_train, file="../output/fit_train_Logistic_Gist.RData")
 
 ### Make prediction 
 tm_test <- system.time(pred_test <- test.lg(fit_train, x.test))
 test.error <- mean(pred_test != y.test)
-test.error
+test.error #0.2346
 save(pred_test, file="../output/pred_test_Logistic_Gist.RData")
 
 ### Summarize Running Time
 #cat("Time for constructing training features=", tm_feature_train[1], "s \n")
 #cat("Time for constructing testing features=", tm_feature_test[1], "s \n")
-cat("Time for training model=", tm_train[1], "s \n") # 1.797s
-cat("Time for making prediction=", tm_test[1], "s \n")
+cat("Time for training model=", tm_train[1], "s \n") # 1.284s
+cat("Time for making prediction=", tm_test[1], "s \n")  # 0.057s
 
 
 
@@ -155,7 +155,7 @@ x.test <- X[-index,]
 y.test <- y[-index]
 
 # Choosing between different values of maximum interation for Logistic
-iter_values <- seq(100,200,5)
+iter_values <- seq(100,460,10)
 err_cv <- array(dim=c(length(iter_values), 2))
 K <- 5  # number of CV folds
 for(k in 1:length(iter_values)){
@@ -172,26 +172,26 @@ arrows(iter_values, err_cv[,1]-err_cv[,2],iter_values, err_cv[,1]+err_cv[,2],
        length=0.1, angle=90, code=3)
 
 # Choose the best parameter value
-min(err_cv[,1]) # min err_cv is 0.209
-iter_best <- iter_values[which.min(err_cv[,1])]
-par_best <- list(maxit=iter_best) # maxit=175 is the best
+min(err_cv[,1]) # min err_cv is 0.2173
+iter_best <- iter_values[which.min(err_cv[,1] + err_cv[,2])]
+par_best <- list(maxit=iter_best) # maxit=190 is the best
 
 # train the model with the entire training set
 tm_train <- system.time(fit_train <- train.lg(x.train, y.train, par_best))
 pred_train <- test.lg(fit_train, x.train)
 train.error <- mean(pred_train != y.train)
-train.error
+train.error #0.1933
 save(fit_train, file="../output/fit_train_Logistic_HOG.RData")
 
 ### Make prediction 
 tm_test <- system.time(pred_test <- test.lg(fit_train, x.test))
 test.error <- mean(pred_test != y.test)
-test.error
+test.error #0.228
 save(pred_test, file="../output/pred_test_Logistic_HOG.RData")
 
 ### Summarize Running Time
-cat("Time for training model=", tm_train[1], "s \n") # 0.832s
-cat("Time for making prediction=", tm_test[1], "s \n") #0.119s
+cat("Time for training model=", tm_train[1], "s \n") # 0.601s
+cat("Time for making prediction=", tm_test[1], "s \n") #0.009s
 
 
 
@@ -229,7 +229,7 @@ arrows(iter_values, err_cv[,1]-err_cv[,2],iter_values, err_cv[,1]+err_cv[,2],
        length=0.1, angle=90, code=3)
 
 # Choose the best parameter value
-min(err_cv[,1]) # min err_cv is 0.26
+min(err_cv[,1]) # min err_cv is 0.2733
 iter_best <- iter_values[which.min(err_cv[,1])]
 par_best <- list(maxit=iter_best) # maxit=40 is the best
 
@@ -237,15 +237,15 @@ par_best <- list(maxit=iter_best) # maxit=40 is the best
 tm_train <- system.time(fit_train <- train.lg(x.train, y.train, par_best))
 pred_train <- test.lg(fit_train, x.train)
 train.error <- mean(pred_train != y.train)
-train.error
+train.error #0.0675
 save(fit_train, file="../output/fit_train_Logistic_SIFT.RData")
 
 ### Make prediction 
 tm_test <- system.time(pred_test <- test.lg(fit_train, x.test))
 test.error <- mean(pred_test != y.test)
-test.error
+test.error #0.272
 save(pred_test, file="../output/pred_test_Logistic_SIFT.RData")
 
 ### Summarize Running Time
-cat("Time for training model=", tm_train[1], "s \n") # 213.602s
-cat("Time for making prediction=", tm_test[1], "s \n") #0.119s
+cat("Time for training model=", tm_train[1], "s \n") # 190.928s
+cat("Time for making prediction=", tm_test[1], "s \n") #3.095s
