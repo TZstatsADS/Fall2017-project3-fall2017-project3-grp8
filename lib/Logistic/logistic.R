@@ -83,13 +83,25 @@ setwd("/Users/duanshiqi/Documents/Github/Fall2017-project3-fall2017-project3-grp
 X<-read.csv("../data/our_data/training_set/features_GIST.csv",header=FALSE,as.is=TRUE)
 y<-read.csv("../data/our_data/training_set/label_train.csv",header=TRUE,as.is=TRUE)[,-1]
 
+# split into training set and validation(test) set
+proportion = 0.75 # training set proportion
+set.seed(0)
+n = length(y)
+index <- sample(n, n*proportion, replace = FALSE)
+
+x.train <- X[index,]
+y.train <- y[index]
+
+x.test <- X[-index,]
+y.test <- y[-index]
+
 # Choosing between different values of maximum interation for Logistic
 iter_values <- 8:20
 err_cv <- array(dim=c(length(iter_values), 2))
 K <- 5  # number of CV folds
 for(k in 1:length(iter_values)){
   cat("k=", k, "\n")
-  err_cv[k,] <- cv.function(X, y, iter_values[k], K)
+  err_cv[k,] <- cv.function(x.train, y.train, iter_values[k], K)
 }
 
 # Visualize CV results
@@ -107,24 +119,40 @@ iter_best <- iter_values[which.min(err_cv[,1])]
 par_best <- list(maxit=iter_best) # maxit=15 is the best
 
 # train the model with the entire training set
-tm_train <- system.time(fit_train <- train.lg(X, y, par_best))
+tm_train <- system.time(fit_train <- train.lg(x.train, y.train, par_best))
+pred_train <- test.lg(fit_train, x.train)
+train.error <- mean(pred_train != y.train)
+train.error
 save(fit_train, file="../output/fit_train_Logistic_Gist.RData")
 
 ### Make prediction 
-tm_test <- system.time(pred_test <- test.lg(fit_train, X))
-sum(pred_test!=y)/3000
+tm_test <- system.time(pred_test <- test.lg(fit_train, x.test))
+test.error <- mean(pred_test != y.test)
+test.error
 save(pred_test, file="../output/pred_test_Logistic_Gist.RData")
 
 ### Summarize Running Time
 #cat("Time for constructing training features=", tm_feature_train[1], "s \n")
 #cat("Time for constructing testing features=", tm_feature_test[1], "s \n")
 cat("Time for training model=", tm_train[1], "s \n") # 1.797s
-#cat("Time for making prediction=", tm_test[1], "s \n")
+cat("Time for making prediction=", tm_test[1], "s \n")
 
 
 
 ### HOG features ###
 X<-read.csv("../data/our_data/training_set/features_HOG.csv",header=TRUE,as.is=TRUE)[,-1]
+
+# split into training set and validation(test) set
+proportion = 0.75 # training set proportion
+set.seed(0)
+n = length(y)
+index <- sample(n, n*proportion, replace = FALSE)
+
+x.train <- X[index,]
+y.train <- y[index]
+
+x.test <- X[-index,]
+y.test <- y[-index]
 
 # Choosing between different values of maximum interation for Logistic
 iter_values <- seq(100,200,5)
@@ -132,7 +160,7 @@ err_cv <- array(dim=c(length(iter_values), 2))
 K <- 5  # number of CV folds
 for(k in 1:length(iter_values)){
   cat("k=", k, "\n")
-  err_cv[k,] <- cv.function(X, y, iter_values[k], K)
+  err_cv[k,] <- cv.function(x.train, y.train, iter_values[k], K)
 }
 
 # Visualize CV results
@@ -149,16 +177,21 @@ iter_best <- iter_values[which.min(err_cv[,1])]
 par_best <- list(maxit=iter_best) # maxit=175 is the best
 
 # train the model with the entire training set
-tm_train <- system.time(fit_train <- train.lg(X, y, par_best))
+tm_train <- system.time(fit_train <- train.lg(x.train, y.train, par_best))
+pred_train <- test.lg(fit_train, x.train)
+train.error <- mean(pred_train != y.train)
+train.error
 save(fit_train, file="../output/fit_train_Logistic_HOG.RData")
 
 ### Make prediction 
-tm_test <- system.time(pred_test <- test.lg(fit_train, X))
-sum(pred_test!=y)/3000
+tm_test <- system.time(pred_test <- test.lg(fit_train, x.test))
+test.error <- mean(pred_test != y.test)
+test.error
 save(pred_test, file="../output/pred_test_Logistic_HOG.RData")
 
 ### Summarize Running Time
 cat("Time for training model=", tm_train[1], "s \n") # 0.832s
+cat("Time for making prediction=", tm_test[1], "s \n") #0.119s
 
 
 
@@ -166,13 +199,25 @@ cat("Time for training model=", tm_train[1], "s \n") # 0.832s
 
 X<-read.csv("../data/our_data/training_set/sift_train.csv",header=TRUE,as.is=TRUE)[,-1]
 
+# split into training set and validation(test) set
+proportion = 0.75 # training set proportion
+set.seed(0)
+n = length(y)
+index <- sample(n, n*proportion, replace = FALSE)
+
+x.train <- X[index,]
+y.train <- y[index]
+
+x.test <- X[-index,]
+y.test <- y[-index]
+
 # Choosing between different values of maximum interation for Logistic
 iter_values <- seq(30,50,5)
 err_cv <- array(dim=c(length(iter_values), 2))
 K <- 5  # number of CV folds
 for(k in 1:length(iter_values)){
   cat("k=", k, "\n")
-  err_cv[k,] <- cv.function(X, y, iter_values[k], K)
+  err_cv[k,] <- cv.function(x.train, y.train, iter_values[k], K)
 }
 
 # Visualize CV results
@@ -189,13 +234,18 @@ iter_best <- iter_values[which.min(err_cv[,1])]
 par_best <- list(maxit=iter_best) # maxit=40 is the best
 
 # train the model with the entire training set
-tm_train <- system.time(fit_train <- train.lg(X, y, par_best))
+tm_train <- system.time(fit_train <- train.lg(x.train, y.train, par_best))
+pred_train <- test.lg(fit_train, x.train)
+train.error <- mean(pred_train != y.train)
+train.error
 save(fit_train, file="../output/fit_train_Logistic_SIFT.RData")
 
 ### Make prediction 
-tm_test <- system.time(pred_test <- test.lg(fit_train, X))
-sum(pred_test!=y)/3000
+tm_test <- system.time(pred_test <- test.lg(fit_train, x.test))
+test.error <- mean(pred_test != y.test)
+test.error
 save(pred_test, file="../output/pred_test_Logistic_SIFT.RData")
 
 ### Summarize Running Time
 cat("Time for training model=", tm_train[1], "s \n") # 213.602s
+cat("Time for making prediction=", tm_test[1], "s \n") #0.119s
