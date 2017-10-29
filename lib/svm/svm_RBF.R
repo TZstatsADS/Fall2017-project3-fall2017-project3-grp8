@@ -24,7 +24,7 @@ y.test <- y[-index]
 
 # tune parameters and tune control
 par.list = list(cost = c(0.001, 0.01, 0.1, 1, 2, 3, 5, 8, 10),
-                 gamma = c(10, 100, 200, 400, 450, 1000, 1200))
+                 gamma = c(0.01, 0.1, 1, 10, 100, 200, 300, 400, 450))
 k = tune.control(cross = 5)
 
 # tune svm with multiple classes using the one-versus-one approach
@@ -32,10 +32,10 @@ set.seed(0)
 tune.out = tune(svm, train.x = x.train, train.y = y.train, kernel = "radial",
                 scale = FALSE, ranges = par.list, tunecontrol = k)
 
-best.para = tune.out$best.parameters # cost = 8, gamma =450 in fact, cost=10, gamma=100 already 0.2153
+best.para = tune.out$best.parameters # cost = 10, gamma =100 in fact, cost=5, gamma=200 already 0.2151
 best.para
-tune.out$best.performance # 0.19467
-#performance.tune<-tune.out$performances
+tune.out$best.performance # 0.2057
+performance.tune<-tune.out$performances
 
 # train the best model on the training set
 #bestmod = tune.out$best.model
@@ -46,16 +46,18 @@ tm_train <- system.time(fit_train<-svm(x.train,y.train,
                                        cost = best.para[1]))
 pred.train <- predict(fit_train, x.train)
 train.error <- mean(pred.train != y.train)
+train.error #0.13288
 save(fit_train, file="../output/fit_train_svmRBF_HOG.RData")
 
 # test the best model on the test set
 tm_test <- system.time(pred.test <- predict(fit_train, x.test))
 test.error <- mean(pred.test != y.test)
+test.error #0.20266
 save(pred.test, file="../output/pred_test_svmRBF_HOG.RData")
 
 ### Summarize Running Time
 
-cat("Time for training model=", tm_train[1], "s \n") # 1.797s
-cat("Time for making prediction=", tm_test[1], "s \n")
+cat("Time for training model=", tm_train[1], "s \n") # 1.412s
+cat("Time for making prediction=", tm_test[1], "s \n") #0.143s
 
 
