@@ -4,6 +4,40 @@ library(gbm)
 library(dplyr)
 library(neuralnet)
 
+train_baseline_gbm(data,
+                   n_trees,
+                   interaction_depth,
+                   shrinkage) {
+  
+  model = gbm(y ~ .,
+              data = data,
+              distribution = 'multinomial',
+              n.trees = n_trees,
+              interaction.depth = interaction_depth,
+              shrinkage = shrinkage)
+  
+  best_iter <- gbm.perf(fit_gbm, method="OOB", plot.it = FALSE)
+  
+  
+  return(model)
+  
+}
+
+test_baseline_gbm(data,
+                  model,
+                  n_trees) {
+  
+  predBST = predict(model,
+                    n.trees=n_trees, 
+                    newdata=data,
+                    type='response')
+  
+  p.predBST <- apply(predBST, 1, which.max) - 1
+
+  return(p.predBST)
+  
+}
+
 gbm_cv_param_optimization = function(train_data) {
   
   ntrees = c(100,300,500)
@@ -59,6 +93,8 @@ gbm_cv_param_optimization = function(train_data) {
   return(optim)
   
 }
+
+
 
 label = read.csv("data/our_data/training_set/label_train.csv")
 
