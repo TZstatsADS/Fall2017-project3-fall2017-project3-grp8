@@ -1,5 +1,5 @@
 
-test.gbm = function(fit_train, data,test) {
+test.gbm = function(fit_train, data.test) {
   ### Fit the GBM model with testing data
   
   ### Input: 
