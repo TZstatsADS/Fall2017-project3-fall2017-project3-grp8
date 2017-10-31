@@ -245,7 +245,7 @@ if (run.cv){
       for (j in interactiondepths) {
         for (k in shrinkages) {
           cv_base$ntree[counter] = i
-          cv_baes$interactiondepth[counter] = j
+          cv_base$interactiondepth[counter] = j
           cv_base$shrinkage[counter] = k
           par.base = list(n_trees = i, interaction_depth = j, shrinkage = k)
           res_gbm = cv.gbm(dat_train, par.base, K)
