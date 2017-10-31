@@ -60,7 +60,7 @@ test.svm_linear <- function(fit_train, data.test){
 
 
 
-test.xg <- function(fit_train, data.test){
+test.xgb <- function(fit_train, data.test){
   
   ### Fit the Xgboost model with testing data
   
