@@ -1,33 +1,30 @@
 ########################
 ### Cross Validation ###
 ########################
-
-### Author: Yuting Ma
-### Project 3
-### ADS Spring 2016
-
-
-cv.gbm <- function(data, n_folds, par){
+cv.sample <- function(dat_train, K){
   
-  indices = sample(x = rep(c(1:n_folds),nrow(data)/n_folds),
-                   size = nrow(data),
-                   replace = F)
-  
-  err = rep(NA,n_folds)  
+  n <- nrow(dat_train)
+  n.fold <- floor(n/K)
+  s <- sample(rep(1:K, c(rep(n.fold, K-1), n-(K-1)*n.fold)))  
+  return(s)
+}
 
-  for (i in 1:n_folds) {
+cv.gbm <- function(dat_train, par, K, idx){
+  
+  err.gbm = rep(NA, K)  
+
+  for (i in 1:K) {
     
-    model = train.gbm(train.data=data[which(indices != i),],
+    fit_gbm = train.gbm(train.data = dat_train[idx != i,],
                                par = par)
     
-    test_data = data[which(indices == i),]
+    #test_data = dat[which(indices == i),]
     
-    res = test.gbm(fit_train = model, test.data = test_data[,-1])
+    pred = test.gbm(fit_train = fit_gbm, data.test = dat_train[idx == i, -1])
     
-    err[i] = 1 - sum(res == test_data[,1]) / nrow(test_data)
-    
+    err.gbm[i] = mean(pred != dat_train[idx == i, 1])
   }
 
-  return(c(mean(err),sd(err)))
+  return(c(mean(err.gbm),sd(err.gbm)))
   
 }
