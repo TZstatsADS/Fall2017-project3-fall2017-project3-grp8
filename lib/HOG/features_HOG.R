@@ -39,3 +39,4 @@ feature<-function(img_dir, export=TRUE){
 }
 
 dat_HOG<-feature(img_dir)
+write.csv(dat_HOG,"../output/features_HOG.csv")
