@@ -1,0 +1,132 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+# load library
+library(e1071)
+```
+
+```{r}
+train.svm<-function(data_train,label_train,par){
+  library(e1071)
+  label_train<-factor(label_train)
+  label_train<-relevel(label_train,ref="0")
+    svm<-svm(x=data_train,y=label_train,kernel="linear",
+             cost=par,scale=FALSE)
+  return(svm)
+}
+```
+
+```{r}
+test.svm<-function(fit_train,data_test){
+  library(e1071)
+  prediction<-predict(fit_train,newdata=data_test)
+  return(prediction)
+}
+```
+
+```{r}
+cv.function <- function(X.train, y.train, par, K){
+  set.seed(0)
+  n <- length(y.train)
+  n.fold <- floor(n/K)
+  s <- sample(rep(1:K, c(rep(n.fold, K-1), n-(K-1)*n.fold)))  
+  cv.error <- rep(NA, K)
+  for (i in 1:K){
+    train.data <- X.train[s != i,]
+    train.label <- y.train[s != i]
+    test.data <- X.train[s == i,]
+    test.label <- y.train[s == i]
+    fit <- train.svm(train.data, train.label, par)
+    pred <- test.svm(fit, test.data)  
+    cv.error[i] <- mean(pred != test.label)  
+  }			
+  return(c(mean(cv.error),sd(cv.error)))
+}
+```
+### GIST features ###
+```{r}
+# load data
+setwd("~/Documents/Fall2017-project3-fall2017-project3-grp8/data/our_data/training_set")
+X<-read.csv("features_GIST.csv",header=FALSE,as.is=TRUE)
+y<-read.csv("label_train.csv",header=TRUE,as.is=TRUE)[,-1]
+y<-as.factor(y)
+set.seed(0)
+indicator.x<-sample(1:nrow(X),0.75*nrow(X),replace=FALSE)
+X.train<-X[indicator,]
+y.train<-y[indicator]
+X.test<-X[-indicator,]
+y.test<-y[-indicator]
+# tune parameters and tune control
+par.list = list(cost = c(0.1,1,3,5,8,10))
+k = tune.control(cross = 5)
+
+# tune svm with multiple classes using the one-versus-one approach
+set.seed(0)
+tune.out = tune(svm, train.x = X.train, train.y = y.train, kernel = "linear",
+                scale = FALSE, ranges = par.list, tunecontrol = k)
+
+tune.out$best.parameters # cost = 10
+tune.out$best.performance # 0.286
+performances<-tune.out$performances
+save(tune.out, file="fit_train_svmLin_GIST.RData")
+
+# train the best model on the whole training set
+bestmod = tune.out$best.model
+tm_train <- system.time(pred <- predict(bestmod, X.test))
+save(pred, file="pred_test_svmLin_GIST.RData")
+sum(pred != y.test)/length(y.test) # 0.245
+cat("Time for training model=", tm_train[1], "s \n") # 0.749s
+
+### HOG features ###
+# load data
+X<-read.csv("features_HOG.csv",header=TRUE,as.is=TRUE)[,-1]
+X.train<-X[indicator,]
+X.test<-X[-indicator,]
+# tune parameters and tune control
+par.list = list(cost = c(0.1,1,3,5,8,10))
+k = tune.control(cross = 5)
+
+# tune svm with multiple classes using the one-versus-one approach
+tune.out = tune(svm, train.x = X.train, train.y = y.train, kernel = "linear",
+                scale = FALSE, ranges = par.list, tunecontrol = k)
+
+tune.out$best.parameters # cost 10
+tune.out$best.performance # 0.411
+performances<-tune.out$performances
+save(tune.out, file="fit_train_svmLin_HOG.RData")
+
+# train the best model on the whole training set
+bestmod = tune.out$best.model
+tm_train <- system.time(pred <- predict(bestmod, X.test))
+save(pred, file="pred_test_svmLin_HOG.RData")
+sum(pred != y.test)/length(y.test) # 0.417
+cat("Time for training model=", tm_train[1], "s \n") # 0.12s
+
+### SIFT ###
+# load data
+X<-read.csv("sift_train.csv",header=TRUE,as.is=TRUE)[,-1]
+X.train<-X[indicator,]
+X.test<-X[-indicator,]
+# tune parameters and tune control
+par.list = list(cost = c(0.1,1,3,5,8,10))
+k = tune.control(cross = 5)
+
+# tune svm with multiple classes using the one-versus-one approach
+tune.out = tune(svm, train.x = X.train, train.y = y.train, kernel = "linear",
+                scale = FALSE, ranges = par.list, tunecontrol = k)
+
+tune.out$best.parameters # cost = 10
+tune.out$best.performance #0.54
+performances<-tune.out$performances
+save(tune.out, file="fit_train_svmLin_SIFT.RData")
+
+# train the best model on the whole training set
+bestmod = tune.out$best.model
+tm_train <- system.time(pred <- predict(bestmod, X.test))
+save(pred, file="pred_test_svmLin_SIFT.RData")
+sum(pred != y.test)/length(y.test) # 0.5
+cat("Time for training model=", tm_train[1], "s \n") # 7.159s
+```
