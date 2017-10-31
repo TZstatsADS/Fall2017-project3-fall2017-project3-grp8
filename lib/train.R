@@ -29,8 +29,9 @@ train.gbm = function(train.data,par = NULL){
               n.trees = n_trees,
               interaction.depth = interaction_depth,
               shrinkage = shrinkage)
+  best_iter <- gbm.perf(fit_gbm, method = "OOB", plot.it = FALSE)
   
-  return(fit_gbm)
+  return(list(fit = fit_gbm, iter = best_iter))
 }
                               
   
