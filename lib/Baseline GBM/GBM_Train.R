@@ -1,9 +1,9 @@
 library(gbm)
 
-train_baseline_gbm(data,
-                   n_trees,
-                   interaction_depth,
-                   shrinkage) {
+train_baseline_gbm = function(data,
+                               n_trees,
+                               interaction_depth,
+                               shrinkage) {
   
   model = gbm(y ~ .,
               data = data,

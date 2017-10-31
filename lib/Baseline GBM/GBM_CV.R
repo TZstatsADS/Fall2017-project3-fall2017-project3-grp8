@@ -59,3 +59,26 @@ gbm_cv_param_optimization = function(train_data) {
   return(optim)
   
 }
+
+
+data = read.csv("data/our_data/training_set/sift_train.csv")[,-1]
+train_label = read.csv("data/our_data/training_set/label_train.csv")[,-1]
+
+all_data = cbind(train_label,data)
+colnames(all_data)[1] = 'y'
+
+train_indices = sample(x=1:3000,size = 400, replace=F)
+
+train_data = all_data[train_indices,]
+test_data = all_data[-train_indices,]
+
+optim = gbm_cv_param_optimization(train_data)
+
+model = train_baseline_gbm(data=train_data,
+                           n_trees = 100,
+                           interaction_depth = 1,
+                           shrinkage = 0.05)
+
+res = test_baseline_gbm(data = test_data[,-1],model = model, n_trees = 100)
+
+1 - sum(res == test_data[,1]) / nrow(test_data)

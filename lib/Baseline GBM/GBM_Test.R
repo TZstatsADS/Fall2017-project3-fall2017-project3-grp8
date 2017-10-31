@@ -1,8 +1,8 @@
 library(gbm)
 
-test_baseline_gbm(data,
-                  model,
-                  n_trees) {
+test_baseline_gbm = function(data,
+                              model,
+                              n_trees) {
   
   predBST = predict(model,
                     n.trees=n_trees, 
