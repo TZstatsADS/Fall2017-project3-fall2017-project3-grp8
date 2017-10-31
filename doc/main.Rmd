@@ -52,14 +52,14 @@ In this chunk,we have a set of controls for the evaluation experiments.
 * (T/F) run evaluation on an independent test set
 
 ```{r}
-Baseline=F       #Use baseline or the Advance Model
+Baseline=T       #Use baseline or the Advance Model
 set_seed=T        #use set.seed() whenever randomization needed
-run.cv=T         # run cross-validation on the training set
+run.cv=F         # run cross-validation on the training set
 K = 5                 # number of CV folds
 train_proportion=0.75  # Porportion of the data that used for training the model
 
-new.feature.train =T    #process features for given training set
-new.feature.test=T      # process features for independent testing set
+new.feature.train =F    #process features for given training set
+new.feature.test=F      # process features for independent testing set
 run.test=F     # run evaluation on an independent test set
 ```
 
@@ -109,7 +109,7 @@ if(set_seed){
   set.seed(0)
   idx<-sample(n,round(train_proportion*n,1),replace = F)
 } else{
-  Idx<-sample(n,round(train_proportion*n,1),replace = F)
+  idx<-sample(n,round(train_proportion*n,1),replace = F)
 }
 #n is the No. of all provided data
 dat <- cbind(y, X)
@@ -339,7 +339,7 @@ if (!Baseline){
 if (Baseline){
   pred_test <- test.gbm(fit_train, dat_test[,-1])
    cat("The Test Error for the baseline model=",
-       mean(pred_test != dat_test[,-1]))
+       mean(pred_test != dat_test[,1]))
 }
 ```
 
