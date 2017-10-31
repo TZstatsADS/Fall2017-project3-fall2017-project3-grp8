@@ -98,30 +98,45 @@ train.svm_linear<-function(train.data, par = NULL){
   return(fit_svm_linear)
 }
 
-train.lg <- function(data.train, par){
+train.xgboost <- function(data.train, par){
   
-  ### Train a multinomial logistic regression classifier using features of training images
+  ### Train a Xgboost classifier using features of training images
   
   ### Input:
   ### - training data including features of training images 
   ###                       and class labels of training images
   ### Output:
-  ### - training logistic model specification
+  ### - training Xgboost model specification
   
   ### load libraries
-  library("nnet")
+  library("xgboost")
   
-  ### train with logistic
+  ### train with Xgboost
   
   if(is.null(par)){
-    maxit <- 100
+    eta = 0.35
+    max_depth = 10
+    nrounds = 60
+    early_stopping_rounds = 60
   } 
   else {
-    maxit <- par$maxit
+    eta <- par$eta
+    max_depth <- par$max_depth
+    nrounds <- par$nrounds
+    early_stopping_rounds <- par$early_stopping_rounds
   }
   
-  fit_lg <- multinom(y ~ ., data = train.data, MaxNWts = 20000, maxit = maxit)
+  fit_xgb <- xgboost(data = data.matrix(train.data[, -1]),
+                     label = train.data[, 1],
+                     eta = eta,
+                     max_depth = max_depth, 
+                     nrounds = nrounds,
+                     early_stopping_rounds = early_stopping_rounds,
+                     eval_metric = "merror",
+                     objective = "multi:softmax",
+                     num_class = 3,
+                     nthread = 3)
   
-  return(fit_lg)
+  return(fit_xgb)
 }
 
