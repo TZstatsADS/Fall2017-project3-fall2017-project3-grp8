@@ -26,7 +26,7 @@ cv.svm_rbf <- function(dat_train, par.ranges, K){
   tune.out = tune(svm, train.x = dat_train[, -1], train.y = dat_train[, 1], 
                   kernel = "radial",
                   scale = FALSE, 
-                  ranges = par.list, 
+                  ranges = par.ranges, 
                   tunecontrol = tune.control(cross = K))
   
   best.para = tune.out$best.parameters 
@@ -44,7 +44,7 @@ cv.svm_linear <- function(dat_train, par.ranges, K){
   tune.out = tune(svm, train.x = dat_train[, -1], train.y = dat_train[, 1], 
                   kernel = "linear",
                   scale = FALSE, 
-                  ranges = par.list, 
+                  ranges = par.ranges, 
                   tunecontrol = tune.control(cross = K))
   
   best.para = tune.out$best.parameters 
