@@ -1,26 +1,78 @@
-######################################################
-### Fit the classification model with testing data ###
-######################################################
 
-### Author: Yuting Ma
-### Project 3
-### ADS Spring 2016
-
-test <- function(fit_train, dat_test){
-  
-  ### Fit the classfication model with testing data
+test.gbm = function(fit_train, test.data) {
+  ### Fit the GBM model with testing data
   
   ### Input: 
-  ###  - the fitted classification model using training data
-  ###  -  processed features from testing images 
-  ### Output: training model specification
+  ###  - the fitted GBM model using training data
+  ###  - processed features from testing images
+  ### Output: prediction labels
   
   ### load libraries
   library("gbm")
   
-  pred <- predict(fit_train$fit, newdata=dat_test, 
-                  n.trees=fit_train$iter, type="response")
+  predBST = predict(fit_train$fit,
+                    n.trees=fit_train$iter, 
+                    newdata=test.data,
+                    type='response')
   
-  return(as.numeric(pred> 0.5))
+  p.predBST <- apply(predBST, 1, which.max) - 1
+  
+  return(p.predBST)
+  
 }
 
+
+test.svm_rbf <- function(fit_train, data.test){
+  
+  ### Fit the svm_rbf model with testing data
+  
+  ### Input: 
+  ###  - the fitted svm_rbf model using training data
+  ###  -  processed features from testing images 
+  ### Output: prediction labels
+  
+  ### load libraries
+  library("e1071")
+  pred <- predict(fit_train, data.test)
+  
+  return(pred)
+}
+
+
+
+test.svm_linear <- function(fit_train, data.test){
+  
+  ### Fit the svm_linear model with testing data
+  
+  ### Input: 
+  ###  - the fitted svm_linear model using training data
+  ###  -  processed features from testing images 
+  ### Output: prediction labels
+  
+  ### load libraries
+  library("e1071")
+  pred <- predict(fit_train, data.test)
+  
+  return(pred)
+}
+
+
+
+
+
+test.lg <- function(fit_train, data.test){
+  
+  ### Fit the logistic model with testing data
+  
+  ### Input: 
+  ###  - the fitted logistic model using training data
+  ###  -  processed features from testing images 
+  ### Output: prediction labels
+  
+  ### load libraries
+  library("nnet")
+  
+  pred <- predict(fit_train, data.test)
+  
+  return(pred)
+}
