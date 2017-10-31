@@ -21,7 +21,7 @@ cv.gbm <- function(dat_train, par, K){
 }
 
 
-cv.svm_rbf <- function(dat_train, par.list, K){
+cv.svm_rbf <- function(dat_train, par.ranges, K){
   # tune svm with multiple classes using the one-versus-one approach
   tune.out = tune(svm, train.x = dat_train[, -1], train.y = dat_train[, 1], 
                   kernel = "radial",
@@ -39,7 +39,7 @@ cv.svm_rbf <- function(dat_train, par.list, K){
 }
 
 
-cv.svm_linear <- function(dat_train, par.list, K){
+cv.svm_linear <- function(dat_train, par.ranges, K){
   # tune svm with multiple classes using the one-versus-one approach
   tune.out = tune(svm, train.x = dat_train[, -1], train.y = dat_train[, 1], 
                   kernel = "linear",
@@ -54,4 +54,23 @@ cv.svm_linear <- function(dat_train, par.list, K){
   return(list(best.par = best.para, 
               smallest.cv_error = smallest.err, 
               performances = performance.tune))
+}
+
+cv.xgb <- function(dat_train, K, par){
+  
+  xgb <- xgb.cv(data = data.matrix(dat_train[, -1]),
+                label = dat_train[, 1],
+                eta = par$eta,
+                max_depth = par$max_depth,
+                nrounds = par$nrounds,
+                nfold = K,
+                num_class = 3,
+                early_stopping_rounds = par$early_stopping_rounds,
+                metrics = "merror",
+                objective = "multi:softmax",
+                stratified = TRUE)
+  iter <- xgb$best_iteration
+  cv.err <- xgb$evaluation_log[iter, 4]
+  cv.sd <- xgb$evaluation_log[iter, 5]
+  return (list(iter = iter, cv_error = cv.error, cv_sd = cv.sd))
 }
