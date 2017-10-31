@@ -1,5 +1,5 @@
 
-test.gbm = function(fit_train, test.data) {
+test.gbm = function(fit_train, data,test) {
   ### Fit the GBM model with testing data
   
   ### Input: 
@@ -12,7 +12,7 @@ test.gbm = function(fit_train, test.data) {
   
   predBST = predict(fit_train$fit,
                     n.trees=fit_train$iter, 
-                    newdata=test.data,
+                    newdata=data.test,
                     type='response')
   
   p.predBST <- apply(predBST, 1, which.max) - 1
@@ -60,9 +60,9 @@ test.svm_linear <- function(fit_train, data.test){
 
 
 
-test.lg <- function(fit_train, data.test){
+test.xg <- function(fit_train, data.test){
   
-  ### Fit the logistic model with testing data
+  ### Fit the Xgboost model with testing data
   
   ### Input: 
   ###  - the fitted logistic model using training data
@@ -70,7 +70,7 @@ test.lg <- function(fit_train, data.test){
   ### Output: prediction labels
   
   ### load libraries
-  library("nnet")
+  library("xgboost")
   
   pred <- predict(fit_train, data.test)
   
