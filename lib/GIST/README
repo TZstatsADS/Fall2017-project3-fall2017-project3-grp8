@@ -1,0 +1,11 @@
+This is the folders for the gist features of training images, please test it
+Instruction for GIST:
+for this feature, we use a toolbox in MatLab, the following is the github link
+https://github.com/adikhosla/feature-extraction
+Please read README carefully when you try to install it
+Step 1: Clone the whole zipfile from the above link into your device and unzip it, make sure you have MinGw-w64 complier installed
+Step 2: Run the compile matlab file, make sure you set the right path
+Step 3: Download the features.m file into the folder
+Step 4: Move all the new images into the new folder you create in the main folder, let us call it new
+Step 5: Run the code
+Step 6: You can find the data file as features.csv
