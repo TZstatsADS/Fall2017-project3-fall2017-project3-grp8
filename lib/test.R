@@ -1,5 +1,5 @@
 
-test.gbm = function(fit_train, data.test) {
+test.gbm = function(fit_train, test.data) {
   ### Fit the GBM model with testing data
   
   ### Input: 
@@ -12,7 +12,7 @@ test.gbm = function(fit_train, data.test) {
   
   predBST = predict(fit_train$fit,
                     n.trees=fit_train$iter, 
-                    newdata=data.test,
+                    newdata=test.data,
                     type='response')
   
   p.predBST <- apply(predBST, 1, which.max) - 1
