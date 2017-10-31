@@ -1,37 +1,126 @@
-#########################################################
-### Train a classification model with training images ###
-#########################################################
-
-### Author: Yuting Ma
-### Project 3
-### ADS Spring 2016
-
-
-train <- function(dat_train, label_train, par=NULL){
+train.gbm = function(train.data,par = NULL){
   
-  ### Train a Gradient Boosting Model (GBM) using processed features from training images
+  ### Train a GBM classifier using features of training images
   
-  ### Input: 
-  ###  -  processed features from images 
-  ###  -  class labels for training images
-  ### Output: training model specification
+  ### Input:
+  ### - training data including features of training images 
+  ###                       and class labels of training images
+  ### Output:
+  ### - training gbm model specification
   
   ### load libraries
   library("gbm")
   
-  ### Train with gradient boosting model
+  ### train with GBM
   if(is.null(par)){
-    depth <- 3
-  } else {
-    depth <- par$depth
+    n_trees = 2000
+    interaction_depth = 3
+    shrinkage = 0.01
   }
-  fit_gbm <- gbm.fit(x=dat_train, y=label_train,
-                     n.trees=2000,
-                     distribution="bernoulli",
-                     interaction.depth=depth, 
-                     bag.fraction = 0.5,
-                     verbose=FALSE)
-  best_iter <- gbm.perf(fit_gbm, method="OOB", plot.it = FALSE)
-
-  return(list(fit=fit_gbm, iter=best_iter))
+  else{
+    n_trees = par$n_trees
+    interaction_depth = par$interaction_depth
+    shrinkage = par$shrinkage
+  }
+  
+  fit_gbm = gbm(y ~ .,
+              data = train.data,
+              distribution = 'multinomial',
+              n.trees = n_trees,
+              interaction.depth = interaction_depth,
+              shrinkage = shrinkage)
+  
+  return(fit_gbm)
 }
+                              
+  
+
+train.svm_rbf<-function(train.data, par = NULL){
+  
+  ### Train a SVM classifier with RBF kernel using features of training images
+  
+  ### Input:
+  ### - training data including features of training images 
+  ###                       and class labels of training images
+  ### Output:
+  ### - training svm_rbf model specification
+  
+  ### load libraries
+  library("e1071")
+  
+  ### train with svm RBF
+  
+  if(is.null(par)){
+    cost = 5
+    gamma = 100
+  }
+  else{
+    cost = par$cost
+    gamma = par$gamma
+  }
+  
+  fit_svm_rbf <- svm(y~., data = train.data, 
+                     kernel = "radial", scale = FALSE,
+                     cost = cost, gamma = gamma)
+  return(fit_svm_rbf)
+}
+
+
+
+train.svm_linear<-function(train.data, par = NULL){
+  
+  ### Train a SVM classifier with linear kernel using features of training images
+  
+  ### Input:
+  ### - training data including features of training images 
+  ###                       and class labels of training images
+  ### Output:
+  ### - training svm_linear model specification
+  
+  ### load libraries
+  library("e1071")
+  
+  ### train with linear RBF
+  
+  if(is.null(par)){
+    cost = 5
+    gamma = 100
+  }
+  else{
+    cost = par$cost
+    gamma = par$gamma
+  }
+  
+  fit_svm_linear <- svm(y~., data = train.data, 
+                     kernel = "linear", scale = FALSE,
+                     cost = cost, gamma = gamma)
+  return(fit_svm_linear)
+}
+
+train.lg <- function(data.train, par){
+  
+  ### Train a multinomial logistic regression classifier using features of training images
+  
+  ### Input:
+  ### - training data including features of training images 
+  ###                       and class labels of training images
+  ### Output:
+  ### - training logistic model specification
+  
+  ### load libraries
+  library("nnet")
+  
+  ### train with logistic
+  
+  if(is.null(par)){
+    maxit <- 100
+  } 
+  else {
+    maxit <- par$maxit
+  }
+  
+  fit_lg <- multinom(y ~ ., data = train.data, MaxNWts = 20000, maxit = maxit)
+  
+  return(fit_lg)
+}
+
