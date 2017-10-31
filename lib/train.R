@@ -13,9 +13,9 @@ train.gbm = function(train.data,par = NULL){
   
   ### train with GBM
   if(is.null(par)){
-    n_trees = 2000
-    interaction_depth = 3
-    shrinkage = 0.01
+    n_trees = 100
+    interaction_depth = 1
+    shrinkage = 0.05
   }
   else{
     n_trees = par$n_trees

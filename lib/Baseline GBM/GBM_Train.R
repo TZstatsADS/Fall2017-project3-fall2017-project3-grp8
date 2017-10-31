@@ -12,6 +12,8 @@ train_baseline_gbm = function(data,
               interaction.depth = interaction_depth,
               shrinkage = shrinkage)
   
-  return(model)
+  iter = gbm.perf(model, method = "OOB", plot.it = FALSE)
+  
+  return(list(model = model, iter = iter))
   
 }

@@ -7,25 +7,27 @@
 ### ADS Spring 2016
 
 
-cv.function <- function(X.train, y.train, d, K){
+cv.gbm <- function(data, n_folds, par){
   
-  n <- length(y.train)
-  n.fold <- floor(n/K)
-  s <- sample(rep(1:K, c(rep(n.fold, K-1), n-(K-1)*n.fold)))  
-  cv.error <- rep(NA, K)
+  indices = sample(x = rep(c(1:n_folds),nrow(data)/n_folds),
+                   size = nrow(data),
+                   replace = F)
   
-  for (i in 1:K){
-    train.data <- X.train[s != i,]
-    train.label <- y.train[s != i]
-    test.data <- X.train[s == i,]
-    test.label <- y.train[s == i]
+  err = rep(NA,n_folds)  
+
+  for (i in 1:n_folds) {
     
-    par <- list(depth=d)
-    fit <- train(train.data, train.label, par)
-    pred <- test(fit, test.data)  
-    cv.error[i] <- mean(pred != test.label)  
+    model = train.gbm(train.data=data[which(indices != i),],
+                               par = par)
     
-  }			
-  return(c(mean(cv.error),sd(cv.error)))
+    test_data = data[which(indices == i),]
+    
+    res = test.gbm(fit_train = model, test.data = test_data[,-1])
+    
+    err[i] = 1 - sum(res == test_data[,1]) / nrow(test_data)
+    
+  }
+
+  return(c(mean(err),sd(err)))
   
 }

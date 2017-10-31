@@ -38,8 +38,8 @@ gbm_cv_param_optimization = function(train_data) {
                                      shrinkage = shrinkages[k])
           
           p.predBST.train = test_baseline_gbm(data = test.cv[,-1],
-                                              model = model,
-                                              n_trees = ntrees[i])
+                                              model = model$model,
+                                              n_trees = model$iter)
           
           cv_res$err[counter] = 1-sum(test.cv[,1] == p.predBST.train) / length(test.cv[,1])
           
@@ -67,8 +67,8 @@ gbm_cv = function(data,
                   shrinkage = 0.05) { 
   
   indices = sample(x = rep(c(1:n_folds),nrow(data)/n_folds),
-         size = nrow(data),
-         replace = F)
+                   size = nrow(data),
+                   replace = F)
   
   err = 0
   
@@ -83,9 +83,9 @@ gbm_cv = function(data,
     test_data = data[which(indices == i),]
     
     res = test_baseline_gbm(data = test_data[,-1],
-                            model = model, 
-                            n_trees = n_trees)
-
+                            model = model$model, 
+                            n_trees = model$iter)
+    
     err = err + 1 - sum(res == test_data[,1]) / nrow(test_data)
     
   }
@@ -95,6 +95,7 @@ gbm_cv = function(data,
   return(err)
   
 }
+
 
 data = read.csv("data/our_data/training_set/sift_train.csv")[,-1]
 train_label = read.csv("data/our_data/training_set/label_train.csv")[,-1]
