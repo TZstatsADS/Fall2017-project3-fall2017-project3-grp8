@@ -1,1 +1,2 @@
 load("/Users/giordun/ADS/Fall2017-project3-fall2017-project3-grp8/output/fit_train.RData")
+load("/Users/giordun/ADS/Fall2017-project3-fall2017-project3-grp8/output/feature_zip_test.RData")
