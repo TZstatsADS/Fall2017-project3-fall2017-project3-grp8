@@ -63,7 +63,6 @@ cv.xgb <- function(dat_train, K, par){
                 eta = par$eta,
                 max_depth = par$max_depth,
                 nrounds = 100,
-                eta = par$eta,
                 gamma = par$gamma,
                 colsample_bytree = 1,
                 min_child_weight = par$min_chile_weight,
