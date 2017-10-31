@@ -3,9 +3,9 @@ library(readr)
 library(stringr)
 library(caret)
 
-setwd("~/ADS/Fall2017-project3-fall2017-project3-grp8")
+# setwd("~/ADS/Fall2017-project3-fall2017-project3-grp8")
 
-labs <- read_csv("data/our_data/training_set/label_train.csv")
+# labs <- read_csv("data/our_data/training_set/label_train.csv")
 
 labs[,3] <- 0
 labs[,3][labs[,2] == 0,] <- 'A'
