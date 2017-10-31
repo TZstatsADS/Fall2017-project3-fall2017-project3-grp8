@@ -60,6 +60,41 @@ gbm_cv_param_optimization = function(train_data) {
   
 }
 
+gbm_cv = function(data, 
+                  n_folds,
+                  n_trees = 100,
+                  interaction_depth = 1,
+                  shrinkage = 0.05) { 
+  
+  indices = sample(x = rep(c(1:n_folds),nrow(data)/n_folds),
+         size = nrow(data),
+         replace = F)
+  
+  err = 0
+  
+  for (i in 1:n_folds) {
+    print(i)
+    
+    model = train_baseline_gbm(data=data[which(indices != i),],
+                               n_trees = n_trees,
+                               interaction_depth = interaction_depth,
+                               shrinkage = shrinkage)
+    
+    test_data = data[which(indices == i),]
+    
+    res = test_baseline_gbm(data = test_data[,-1],
+                            model = model, 
+                            n_trees = n_trees)
+
+    err = err + 1 - sum(res == test_data[,1]) / nrow(test_data)
+    
+  }
+  
+  err = err / n_folds
+  
+  return(err)
+  
+}
 
 data = read.csv("data/our_data/training_set/sift_train.csv")[,-1]
 train_label = read.csv("data/our_data/training_set/label_train.csv")[,-1]
