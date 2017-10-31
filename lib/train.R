@@ -115,30 +115,28 @@ train.xgb <- function(data.train, par){
   
   
   if(is.null(par)){
-    nrounds = 100
     max_depth = 16
     eta = 0.17
     gamma = 0.5
-    colsample_bytree = 1
     min_child_weight = 6.5
     subsample = 0.6
-    early_stopping_rounds = 100
   } 
   else {
     eta <- par$eta
     max_depth <- par$max_depth
-    nrounds <- par$nrounds
-    early_stopping_rounds <- par$early_stopping_rounds
-  }
+    gamma <- par$gamma
+    min_child_weight = par$min_child_weight
+    subsample <- par$subsample
+    }
   
   fit_xgb <- xgboost(data = data.matrix(train.data[, -1]),
                      label = train.data[, 1],
-                     nrounds = nrounds,
+                     nrounds = 100,
                      max_depth = max_depth,
                      eta = eta,
                      gamma = gamma,
-                     colsample_bytree = colsample_bytree, 
-                     early_stopping_rounds = early_stopping_rounds,
+                     colsample_bytree = 1, 
+                     early_stopping_rounds = 100,
                      min_child_weight = min_child_weight,
                      subsample = subsample,
                      eval_metric = "merror",
