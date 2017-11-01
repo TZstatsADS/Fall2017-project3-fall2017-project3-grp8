@@ -59,7 +59,7 @@ run.cv=F         # run cross-validation on the training set
 K = 5                 # number of CV folds
 train_proportion=0.75  # Porportion of the data that used for training the model
 
-new.feature.train =F    #process features for given training set
+new.feature.train =T    #process features for given training set
 new.feature.test=F      # process features for independent testing set
 run.test=F     # run evaluation on an independent test set
 ```
