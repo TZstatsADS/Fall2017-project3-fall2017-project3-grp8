@@ -34,7 +34,7 @@ cv.svm_rbf <- function(dat_train, par.ranges, K){
   performance.tune <- tune.out$performances
   
   return(list(best.par = best.para, 
-              smallest.cv_error = smallest.err, 
+              smallest.cv_error = smallest.cv_error, 
               performances = performance.tune))
 }
 
