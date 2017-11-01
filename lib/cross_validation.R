@@ -74,7 +74,7 @@ cv.xgb <- function(dat_train, K, par){
                 objective = "multi:softmax",
                 stratified = TRUE)
   iter <- xgb$best_iteration
-  cv.err <- xgb$evaluation_log[iter, 4]
-  cv.sd <- xgb$evaluation_log[iter, 5]
-  return (list(iter = iter, cv_error = cv.error, cv_sd = cv.sd))
+  cv.err <- xgb$evaluation_log[iter, ]$test_merror_mean
+  cv.sd <- xgb$evaluation_log[iter, ]$test_merror_std
+  return (list(iter = iter, cv_error = cv.err, cv_sd = cv.sd))
 }
