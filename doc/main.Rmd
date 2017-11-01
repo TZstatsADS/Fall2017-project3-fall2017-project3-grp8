@@ -21,6 +21,7 @@ if(length(packages.needed)>0){
 }
 
 library(OpenImageR)
+library(gbm)
 library(EBImage)
 library(e1071)
 library(xgboost)
@@ -244,6 +245,7 @@ if (run.cv){
     for (i in ntrees) {
       for (j in interactiondepths) {
         for (k in shrinkages) {
+          print(paste0("ntrees=",i," interactiondepths=",j," shrinkages=",k," counter=",counter))
           cv_base$ntree[counter] = i
           cv_base$interactiondepth[counter] = j
           cv_base$shrinkage[counter] = k
