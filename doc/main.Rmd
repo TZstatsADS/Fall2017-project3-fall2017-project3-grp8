@@ -178,7 +178,7 @@ if (run.cv){
     
     ## parameters for svm_rbf
     par.list = list(cost = c(0.01, 0.1, 1, 5, 10),
-                 gamma = c(0.01, 0.1, 1, 10, 100, 200, 450))
+                 gamma = c(0.01, 0.1, 1, 10, 100))
     res_rbf <- cv.svm_rbf(dat_train, par.list, K)
     svm_rbf.para <- res_rbf$best.par
     
