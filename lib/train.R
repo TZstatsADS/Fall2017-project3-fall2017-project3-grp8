@@ -84,17 +84,15 @@ train.svm_linear<-function(train.data, par = NULL){
   ### train with linear RBF
   
   if(is.null(par)){
-    cost = 5
-    gamma = 100
+    cost = 100
   }
   else{
     cost = par$cost
-    gamma = par$gamma
   }
   
   fit_svm_linear <- svm(y~., data = train.data, 
                      kernel = "linear", scale = FALSE,
-                     cost = cost, gamma = gamma)
+                     cost = cost)
   return(fit_svm_linear)
 }
 
