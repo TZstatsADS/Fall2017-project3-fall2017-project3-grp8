@@ -201,6 +201,23 @@ if (run.cv){
     cat("The \'best\' cost for svm_linear =",svm_linear.para$cost,"\n")
     
     
+    ## parameters for Logistic
+    iter_values <- seq(10,220,30)
+    err_cv <- array(dim=c(length(iter_values), 2))
+    for(k in 1:length(iter_values)){
+      cat("k=", k, "\n")
+      err_cv[k,] <- cv.function(dat_train, par=list(maxit=iter_values[k]), K)
+    }
+    save(err_cv, file = "../output/logistic_err_cv.Rdata")
+    # best parameters for Logistic
+    min_cv_err <- min(err_cv[,1])  
+    iter_best <- iter_values[which.min(err_cv[,1] + err_cv[,2])]
+    lg.para <- list(maxit=iter_best) 
+
+    # Print the Cross-Validation Error for the chosen Model:
+    cat("The Cross Validation Error for Logistic =", min_cv_err,"\n")
+    cat("The \'best\' iteration for Logistic =",iter_best,"\n")
+    
     ### find cv-error for our advanced model
     n1 <- nrow(dat_train)
     n.fold <- floor(n1/K)
@@ -217,8 +234,8 @@ if (run.cv){
       fit.rbf = train.svm_rbf(train.data, svm_rbf.para)
       pred.rbf = test.svm_rbf(fit.rbf, data.test)
       
-      fit.linear = train.svm_linear(train.data, svm_linear.para)
-      pred.linear = test.svm_linear(fit.linear, data.test)
+      #fit.linear = train.svm_linear(train.data, svm_linear.para)
+      #pred.linear = test.svm_linear(fit.linear, data.test)
       
       pred = cbind(pred.xgb,as.numeric(pred.rbf)-1,as.numeric(pred.linear)-1)
       pred.adv = as.numeric(sapply(apply(pred,1,table),function(x){names(which.max(x))}))
