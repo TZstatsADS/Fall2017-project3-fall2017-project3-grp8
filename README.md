@@ -14,7 +14,7 @@ Term: Fall 2017
 	+ Peter Li  pwl2107@columbia.edu
 	+ Stephanie Park  ssp2173@columbia.edu
 	
-+ Project summary: In this project, we created a classification engine for images of poodles, fried chickens, and blueberry muffins. We set our baseline model using SIFT features and gradient boosting machine(GBM) classifier. Besides the SIFT features, we also tried GIST and HOG (Histogram of oriented Gradient) descriptors. In terms of classifiers, we considered SVM(Linear and RBF kernel), Random Forest, XGBoost, Logistic Regression, Neural Network, and GBM. After model evaluation and comparison, the final advanced model we selected is using HOG descriptor and a majority vote of XGBoost, Linear SVM, and RBF-kernel SVM classifiers. We increased the accuracy by % and only took % of running time as in baseline model. 
++ Project summary: In this project, we created a classification engine for images of poodles, fried chickens, and blueberry muffins. We set our baseline model using SIFT features and gradient boosting machine(GBM) classifier. Besides the SIFT features, we also tried GIST and HOG (Histogram of oriented Gradient) descriptors. In terms of classifiers, we considered SVM(Linear and RBF kernel), Random Forest, XGBoost, Logistic Regression, Neural Network, and GBM. After model evaluation and comparison, the final advanced model we selected is using HOG descriptor and a majority vote of XGBoost, Logistic Regression, and SVM with RBF kernel classifiers. We increased the accuracy by 27.86% in cross-validation error, by 12.13% in test error, and only took 11% of running time as in baseline model. 
 
 + The root code of our project is available at [Main.Rmd](doc/main.Rmd)
 	
