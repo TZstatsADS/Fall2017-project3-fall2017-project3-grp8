@@ -203,7 +203,7 @@ if (run.cv){
     ### find cv-error for our advanced model
     n1 <- nrow(dat_train)
     n.fold <- floor(n1/K)
-    s1 <- sample(rep(1:K, c(rep(n.fold, K-1), n-(K-1)*n.fold))) 
+    s1 <- sample(rep(1:K, c(rep(n.fold, K-1), n1-(K-1)*n.fold))) 
     cv_err.adv <- rep(NA, K)
     for (i in 1:K){
       train.data = dat_train[s1 != i,]
