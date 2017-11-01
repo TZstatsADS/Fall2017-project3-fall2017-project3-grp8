@@ -76,3 +76,21 @@ test.xgb <- function(fit_train, data.test){
   
   return(pred)
 }
+
+
+test.lg <- function(fit_train, dat_test){
+  
+  ### Fit the classfication model with testing data
+  
+  ### Input: 
+  ###  - the fitted classification model using training data
+  ###  -  processed features from testing images 
+  ### Output: prediction labels
+  
+  ### load libraries
+  library("nnet")
+  
+  pred <- predict(fit_train, dat_test)
+  
+  return(pred)
+}
