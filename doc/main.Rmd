@@ -52,7 +52,7 @@ In this chunk,we have a set of controls for the evaluation experiments.
 * (T/F) run evaluation on an independent test set
 
 ```{r}
-Baseline=T       #Use baseline or the Advance Model
+Baseline=F       #Use baseline or the Advance Model
 set_seed=T        #use set.seed() whenever randomization needed
 run.cv=F         # run cross-validation on the training set
 K = 5                 # number of CV folds
@@ -279,9 +279,9 @@ Step 4.2: train the model:
 if (!Baseline){
   if (run.cv){
     ##Train the model using the best parameters chosen by cross validation:
-    tm_train_xgb <- system.time(fit_train_xgb<-train.xgb(dat_train,xgb.para))
-    tm_train_rbf <- system.time(fit_train_rbf = train.svm_rbf(dat_train, svm_rbf.para))
-    tm_train_lin <- system.time(fit_train_lin = train.svm_linear(dat_train, svm_linear.para))
+    tm_train_xgb <- system.time(fit_train_xgb <- train.xgb(dat_train,xgb.para))
+    tm_train_rbf <- system.time(fit_train_rbf <- train.svm_rbf(dat_train, svm_rbf.para))
+    tm_train_lin <- system.time(fit_train_lin <- train.svm_linear(dat_train, svm_linear.para))
   } else {
     #use pre-specify parameters:
     xgb.para1 <- list(max_depth = 18,
@@ -292,9 +292,9 @@ if (!Baseline){
     svm_linear.para1 <- list(cost = 100)
     
     ##Train the model:
-    tm_train_xgb <- system.time(fit_train_xgb = train.xgb(dat_train,xgb.para1))
-    tm_train_rbf <- system.time(fit_train_rbf = train.svm_rbf(dat_train, svm_rbf.para1))
-    tm_train_lin <- system.time(fit_train_lin = train.svm_linear(dat_train, svm_linear.para1))
+    tm_train_xgb <- system.time(fit_train_xgb <- train.xgb(dat_train,xgb.para1))
+    tm_train_rbf <- system.time(fit_train_rbf <- train.svm_rbf(dat_train, svm_rbf.para1))
+    tm_train_lin <- system.time(fit_train_lin <- train.svm_linear(dat_train, svm_linear.para1))
     cat("We don't have the CV error based on the user's selection")
   }
   

@@ -98,7 +98,7 @@ train.svm_linear<-function(train.data, par = NULL){
   return(fit_svm_linear)
 }
 
-train.xgb <- function(data.train, par){
+train.xgb <- function(train.data, par){
   
   ### Train a Xgboost classifier using features of training images
   
