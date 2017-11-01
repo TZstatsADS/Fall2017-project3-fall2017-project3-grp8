@@ -22,15 +22,15 @@ Term: Fall 2017
 
 Part of the project each member is responsible for:
    
-Shiqi Duan: Feature Extraction, Logistic Regression, RBF-kernel SVM and Random Forest on HOG features, Main File Construction
+	Shiqi Duan: Feature Extraction, Logistic Regression, RBF-kernel SVM and Random Forest on HOG features, Main File Construction
 
-Jordan Leung: XgBoost, Main File Construction, Project Presentation
+	Jordan Leung: XgBoost, Main File Construction, Project Presentation
 
-Jingkai Li: Linear SVM, RBF－kernel SVM on GIST and SIFT
+	Jingkai Li: Linear SVM, RBF kernel SVM on GIST and SIFT
 
-Peter Li: GBM, Neural Networks, Main File Construction
+	Peter Li: GBM, Neural Networks, Main File Construction
      
-Stephanie Park: Random Forest on GIST and SIFT, Project Presentation
+	Stephanie Park: Random Forest on GIST and SIFT, Project Presentation
 
 Following [suggestions](http://nicercode.github.io/blog/2013-04-05-projects/) by [RICH FITZJOHN](http://nicercode.github.io/about/#Team) (@richfitz). This folder is orgarnized as follows.
 
