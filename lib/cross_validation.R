@@ -68,7 +68,7 @@ cv.xgb <- function(dat_train, K, par){
                 min_child_weight = par$min_child_weight,
                 subsample = par$subsample,
                 nfold = K,
-                num_class = 4,
+                num_class = 3,
                 early_stopping_rounds = 100,
                 metrics = "merror",
                 objective = "multi:softmax",

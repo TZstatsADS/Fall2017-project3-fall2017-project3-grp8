@@ -139,7 +139,7 @@ train.xgb <- function(train.data, par){
                      subsample = subsample,
                      eval_metric = "merror",
                      objective = "multi:softmax",
-                     num_class = 4,
+                     num_class = 3,
                      nthread = 3)
   
   return(fit_xgb)
