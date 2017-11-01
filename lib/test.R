@@ -72,7 +72,7 @@ test.xgb <- function(fit_train, data.test){
   ### load libraries
   library("xgboost")
   
-  pred <- predict(fit_train, data.test)
+  pred <- predict(fit_train, data.matrix(data.test))
   
   return(pred)
 }
