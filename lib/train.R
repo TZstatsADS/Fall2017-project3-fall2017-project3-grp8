@@ -96,7 +96,7 @@ train.svm_linear<-function(train.data, par = NULL){
   return(fit_svm_linear)
 }
 
-train.xgb <- function(train.data, par){
+train.xgb <- function(train.data, par = NULL){
   
   ### Train a Xgboost classifier using features of training images
   
@@ -145,3 +145,32 @@ train.xgb <- function(train.data, par){
   return(fit_xgb)
 }
 
+
+train.lg <- function(train.data, par = NULL){
+  
+  ### Train a multinomial logistic regression using processed features from training images
+  
+  ### Input: 
+  ###  -  processed features from images, 
+  ###           and class labels for training images
+  ### Output: training logistic model specification
+  
+  ### load libraries
+  library("nnet")
+  
+  ### combine the features and the labels together
+  #y<-label_train
+  #mydata<-cbind(dat_train,label_train)
+  #mydata$label_train<-factor(label_train)
+  #mydata$label_train<-relevel(mydata$label_train,ref="0")
+  
+  ### train with multinomial logistic regression model
+  if(is.null(par)){
+    maxit <- 190
+  } else {
+    maxit <- par$maxit
+  }
+  fit_lg <- multinom(y~., data = train.data, MaxNWts = 20000, maxit = maxit)
+  
+  return(fit_lg)
+}
