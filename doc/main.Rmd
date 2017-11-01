@@ -219,7 +219,7 @@ if (run.cv){
       fit.linear = train.svm_linear(train.data, svm_linear.para)
       pred.linear = test.svm_linear(fit.linear, data.test)
       
-      pred = cbind(pred.xgb,pred.rbf,pred.linear)
+      pred = cbind(pred.xgb,as.numeric(pred.rbf)-1,as.numeric(pred.linear)-1)
       pred.adv = as.numeric(sapply(apply(pred,1,table),function(x){names(which.max(x))}))
       cv_err.adv[i] = mean(pred.adv!=y.test)
     }
