@@ -287,7 +287,8 @@ if (!Baseline){
     xgb.para1 <- list(max_depth = 18,
                       eta = 0.18,
                       gamma = 0.45,
-                      min_child_weight = 6.6)
+                      min_child_weight = 6.6,
+                      subsample = 0.6)
     svm_rbf.para1 <- list(cost=5, gamma=100)
     svm_linear.para1 <- list(cost = 100)
     
@@ -329,7 +330,7 @@ if (!Baseline){
  pre_test.xgb<-test.xgb(fit_train_xgb, dat_test[,-1])
  pre_test.rbf<-test.svm_rbf(fit_train_rbf, dat_test[,-1])
  pre_test.lin<-test.svm_linear(fit_train_lin, dat_test[,-1])
- com <- cbind(pre_test.xgb, pre_test.rbf, pre_test.lin)
+ com <- cbind(pre_test.xgb, as.numeric(pre_test.rbf)-1, as.numeric(pre_test.lin)-1)
  pre_test_adv = as.numeric(sapply(apply(com,1,table),function(x){names(which.max(x))}))
 
  cat("The Test Error for the advanced model based on the given 3000 images =",mean(pre_test_adv != dat_test[,1]))
