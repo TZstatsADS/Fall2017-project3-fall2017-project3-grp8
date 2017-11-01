@@ -237,7 +237,10 @@ if (run.cv){
       #fit.linear = train.svm_linear(train.data, svm_linear.para)
       #pred.linear = test.svm_linear(fit.linear, data.test)
       
-      pred = cbind(pred.xgb,as.numeric(pred.rbf)-1,as.numeric(pred.linear)-1)
+      fit.lg = train.lg(train.data, lg.para)
+      pred.lg = test.lg(fit.lg, data.test)
+      
+      pred = cbind(pred.xgb,as.numeric(pred.rbf)-1,as.numeric(pred.lg)-1)
       pred.adv = as.numeric(sapply(apply(pred,1,table),function(x){names(which.max(x))}))
       cv_err.adv[i] = mean(pred.adv!=y.test)
     }
@@ -300,7 +303,9 @@ if (!Baseline){
     ##Train the model using the best parameters chosen by cross validation:
     tm_train_xgb <- system.time(fit_train_xgb <- train.xgb(dat_train,xgb.para))
     tm_train_rbf <- system.time(fit_train_rbf <- train.svm_rbf(dat_train, svm_rbf.para))
-    tm_train_lin <- system.time(fit_train_lin <- train.svm_linear(dat_train, svm_linear.para))
+    #tm_train_lin <- system.time(fit_train_lin <- train.svm_linear(dat_train, svm_linear.para))
+    tm_train_lg  <- system.time(fit_train_lg <- train.lg(dat_train, lg.para))
+
   } else {
     #use pre-specify parameters:
     xgb.para1 <- list(max_depth = 18,
@@ -309,19 +314,22 @@ if (!Baseline){
                       min_child_weight = 6.6,
                       subsample = 0.6)
     svm_rbf.para1 <- list(cost=10, gamma=100)
-    svm_linear.para1 <- list(cost = 100)
+    #svm_linear.para1 <- list(cost = 100)
+    lg.para1 <- list(maxit=190)
     
     ##Train the model:
     tm_train_xgb <- system.time(fit_train_xgb <- train.xgb(dat_train,xgb.para1))
     tm_train_rbf <- system.time(fit_train_rbf <- train.svm_rbf(dat_train, svm_rbf.para1))
-    tm_train_lin <- system.time(fit_train_lin <- train.svm_linear(dat_train, svm_linear.para1))
+    #tm_train_lin <- system.time(fit_train_lin <- train.svm_linear(dat_train, svm_linear.para1))
+    tm_train_lg  <- system.time(fit_train_lg <- train.lg(dat_train, lg.para1))
+
     cat("We don't have the CV error based on the user's selection")
   }
   
   ##Save the model:
   save(fit_train_xgb, file="../output/fit_train_xgb.RData")
   save(fit_train_rbf, file="../output/fit_train_rbf.RData")
-  save(fit_train_lin, file="../output/fit_train_lin.RData")
+  save(fit_train_lin, file="../output/fit_train_lg.RData")
 }
 
   
@@ -348,8 +356,9 @@ if (!Baseline){
   ##Get the test accuracy:
  pre_test.xgb<-test.xgb(fit_train_xgb, dat_test[,-1])
  pre_test.rbf<-test.svm_rbf(fit_train_rbf, dat_test[,-1])
- pre_test.lin<-test.svm_linear(fit_train_lin, dat_test[,-1])
- com <- cbind(pre_test.xgb, as.numeric(pre_test.rbf)-1, as.numeric(pre_test.lin)-1)
+ #pre_test.lin<-test.svm_linear(fit_train_lin, dat_test[,-1])
+ pre_test.lg <- test.lg(fit_train_lg, dat_test[, -1])
+ com <- cbind(pre_test.xgb, as.numeric(pre_test.rbf)-1, as.numeric(pre_test.lg)-1)
  pre_test_adv = as.numeric(sapply(apply(com,1,table),function(x){names(which.max(x))}))
 
  cat("The Test Error for the advanced model based on the given 3000 images =",mean(pre_test_adv != dat_test[,1]))
@@ -381,16 +390,16 @@ if(run.test){
   } else {
     load(file="../output/fit_train_xgb.RData") 
     load(file="../output/fit_train_rbf.RData") 
-    load(file="../output/fit_train_lin.RData") 
+    load(file="../output/fit_train_lg.RData") 
 
     tm_test_xgb <- system.time(
            pred_new_xgb <-test.xgb(fit_train_xgb,new.X))
     tm_test_rbf <- system.time(
            pred_new_rbf <-test.svm_rbf(fit_train_rbf,new.X))
-    tm_test_lin <- system.time(
-           pred_new_lin <-test.svm_linear(fit_train_lin,new.X))
+    tm_test_lg <- system.time(
+           pred_new_lg <-test.lg(fit_train_lg,new.X))
     
-    tcom = cbind(pred_new_cgb,as.numeric(pred_new_rbf)-1,as.numeric(pred_new_lin)-1)
+    tcom = cbind(pred_new_cgb,as.numeric(pred_new_rbf)-1,as.numeric(pred_new_lg)-1)
     pre_new_adv = as.numeric(sapply(apply(tcom,1,table),function(x){names(which.max(x))}))
 
     save(pre_new_adv, file="../output/pred_new_adv.RData")
@@ -404,14 +413,15 @@ Step 6: Summarize Running Time
 if(!Baseline){
   cat("time for training model on Xgboost = ", tm_train_xgb[1],"s \n")
   cat("time for training model on svm_RBF = ", tm_train_rbf[1],"s \n")
-  cat("time for training model on svm_linear = ", tm_train_lin[1],"s \n")
+  cat("time for training model on logistic = ", tm_train_lg[1],"s \n")
   cat("total time for training advanced model is around = ",
-      tm_train_xgb[1]+tm_train_lin[1]+tm_train_rbf[1],"s \n")
+      tm_train_xgb[1]+tm_train_lg[1]+tm_train_rbf[1],"s \n")
+  
   cat("Time for making prediction on Xgboost = ", tm_test_xgb[1], "s \n")
   cat("Time for making prediction on svm_RBF = ", tm_test_rbf[1], "s \n")
-  cat("Time for making prediction on svm_linear = ", tm_test_lin[1], "s \n")
+  cat("Time for making prediction on logistic  = ", tm_test_lg[1], "s \n")
   cat("total time for making prediction on advanced model is around = ",
-      tm_test_xgb[1]+tm_test_lin[1]+tm_test_rbf[1],"s \n")
+      tm_test_xgb[1]+tm_test_lg[1]+tm_test_rbf[1],"s \n")
 }else{
   cat("Time for training model=", tm_train[1], "s \n")  
   cat("Time for making prediction=", tm_test[1], "s \n")
