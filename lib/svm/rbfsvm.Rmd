@@ -1,0 +1,107 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+train.svm.rbf<-function(data_train,label_train,par){
+  library(e1071)
+  label_train<-factor(label_train)
+  label_train<-relevel(label_train,ref="0")
+    svm<-svm(x=data_train,y=label_train,kernel="radial",
+             cost=par[[1]],gamma=par[[2]],scale=FALSE)
+  return(svm)
+}
+```
+
+```{r}
+# load library
+library(e1071)
+
+### GIST features ###
+# load data
+setwd("~/Documents/Fall2017-project3-fall2017-project3-grp8/data/our_data/training_set")
+X<-read.csv("features_GIST.csv",header=FALSE,as.is=TRUE)
+X.train<-X[indicator,]
+X.test<-X[-indicator,]
+# tune parameters and tune control
+par.list = list(cost = c(0.01, 0.1, 1, 5, 10),
+                 gamma = c(0.01, 0.1, 1, 10, 100))
+k = tune.control(cross = 5)
+
+# tune svm with multiple classes using the one-versus-one approach
+tune.out = tune(svm, train.x = X.train, train.y = y.train, kernel = "radial",
+                scale = FALSE, ranges = par.list, tunecontrol = k)
+
+tune.out$best.parameters # cost = 5, gamma =1
+tune.out$best.performance # 0.267
+performances<-tune.out$performances
+save(tune.out, file="fit_train_svmRBF_GIST.RData")
+
+# train the best model on the whole training set
+bestmod = tune.out$best.model
+tm_train <- system.time(train.svm.rbf(X.train,y.train,tune.out$best.parameters))
+cat("Time for training model=", tm_train[1], "s \n")
+tm_test <- system.time(pred <- predict(bestmod, X.test)) # 7.443s
+save(pred, file="pred_test_svmRBF_GIST.RData")
+sum(pred != y.test)/length(y.test) # 0.232
+cat("Time for test model=", tm_test[1], "s \n") #0.781s
+
+
+### HOG features ###
+# load data
+X<-read.csv("features_HOG.csv",header=TRUE,as.is=TRUE)[,-1]
+X.train<-X[indicator,]
+X.test<-X[-indicator,]
+
+# tune parameters and tune control
+par.list = list(cost = c(0.01, 0.1, 1, 5, 10),
+                 gamma = c(0.01, 0.1, 1, 10, 100))
+k = tune.control(cross = 5)
+
+# tune svm with multiple classes using the one-versus-one approach
+tune.out = tune(svm, train.x = X.train, train.y = y.train, kernel = "radial",
+                scale = FALSE, ranges = par.list, tunecontrol = k)
+
+tune.out$best.parameters # cost = 10, gamma =100
+tune.out$best.performance # 0.223
+performances<-tune.out$performances
+save(tune.out, file="fit_train_svmRBF_HOG.RData")
+
+# train the best model on the whole training set
+bestmod = tune.out$best.model
+tm_train <- system.time(train.svm.rbf(X.train,y.train,tune.out$best.parameters))
+cat("Time for training model=", tm_train[1], "s \n") # 0.832
+tm_test <- system.time(pred <- predict(bestmod, X.test))
+save(pred, file="pred_test_svmRBF_HOG.RData")
+sum(pred != y.test)/length(y.test) # 0.20
+cat("Time for test model=", tm_test[1], "s \n") # 0.089s
+
+### SIFT ###
+# load data
+X<-read.csv("sift_train.csv",header=TRUE,as.is=TRUE)[,-1]
+X.train<-X[indicator,]
+X.test<-X[-indicator,]
+
+# tune parameters and tune control
+par.list = list(cost = c(0.01, 0.1, 1, 5, 10),
+                 gamma = c(0.01, 0.1, 1, 10, 100))
+k = tune.control(cross = 5)
+
+# tune svm with multiple classes using the one-versus-one approach
+tune.out = tune(svm, train.x = X.train, train.y = y.train, kernel = "radial",
+                scale = FALSE, ranges = par.list, tunecontrol = k)
+
+tune.out$best.parameters # cost = 10, gamma =100
+tune.out$best.performance # 0.177
+performances<-tune.out$performances
+save(tune.out, file="fit_train_svmRBF_SIFT.RData")
+
+# train the best model on the whole training set
+bestmod = tune.out$best.model
+tm_train <- system.time(train.svm.rbf(X.train,y.train,tune.out$best.parameters))
+cat("Time for training model=", tm_train[1], "s \n") # 57.044s
+tm_test <- system.time(pred <- predict(bestmod, X.test))
+save(pred, file="pred_test_svmRBF_SIFT.RData")
+sum(pred != y.test)/length(y.test) # 0.1787
+cat("Time for test model=", tm_test[1], "s \n") # 5.89s
+```
