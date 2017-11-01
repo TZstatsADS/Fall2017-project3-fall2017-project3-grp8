@@ -65,7 +65,7 @@ cv.xgb <- function(dat_train, K, par){
                 nrounds = 100,
                 gamma = par$gamma,
                 colsample_bytree = 1,
-                min_child_weight = par$min_chile_weight,
+                min_child_weight = par$min_child_weight,
                 subsample = par$subsample,
                 nfold = K,
                 num_class = 4,
