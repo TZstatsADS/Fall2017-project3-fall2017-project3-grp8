@@ -289,7 +289,7 @@ if (!Baseline){
                       gamma = 0.45,
                       min_child_weight = 6.6,
                       subsample = 0.6)
-    svm_rbf.para1 <- list(cost=5, gamma=100)
+    svm_rbf.para1 <- list(cost=10, gamma=100)
     svm_linear.para1 <- list(cost = 100)
     
     ##Train the model:
@@ -371,7 +371,7 @@ if(run.test){
     tm_test_lin <- system.time(
            pred_new_lin <-test.svm_linear(fit_train_lin,new.X))
     
-    tcom = cbind(pred_new_cgb,pred_new_rbf,pred_new_lin)
+    tcom = cbind(pred_new_cgb,as.numeric(pred_new_rbf)-1,as.numeric(pred_new_lin)-1)
     pre_new_adv = as.numeric(sapply(apply(tcom,1,table),function(x){names(which.max(x))}))
 
     save(pre_new_adv, file="../output/pred_new_adv.RData")
