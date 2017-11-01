@@ -67,35 +67,6 @@ train.svm_rbf<-function(train.data, par = NULL){
 }
 
 
-
-train.svm_linear<-function(train.data, par = NULL){
-  
-  ### Train a SVM classifier with linear kernel using features of training images
-  
-  ### Input:
-  ### - training data including features of training images 
-  ###                       and class labels of training images
-  ### Output:
-  ### - training svm_linear model specification
-  
-  ### load libraries
-  library("e1071")
-  
-  ### train with linear RBF
-  
-  if(is.null(par)){
-    cost = 100
-  }
-  else{
-    cost = par$cost
-  }
-  
-  fit_svm_linear <- svm(y~., data = train.data, 
-                     kernel = "linear", scale = FALSE,
-                     cost = cost)
-  return(fit_svm_linear)
-}
-
 train.xgb <- function(train.data, par = NULL){
   
   ### Train a Xgboost classifier using features of training images

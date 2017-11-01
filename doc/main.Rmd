@@ -8,18 +8,18 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-In this project, we carried out model evaluation and selection for predictive analytics on the image data. We created a classification engine for images of poodles, fried chickens, and muffins. For feature extraction method, we used HOG because it is easy to understand and much faster than SIFT and GIST. For classification methods, we tried Xgboost, SVM with linear and RBF kernels, Logistic Regression, Neural Networks and Random Forest. And in the end, we chose HOG and the majority vote of svm_rbf, svm_linear, and xgboost as our final (advanced) model.
+In this project, we carried out model evaluation and selection for predictive analytics on the image data. We created a classification engine for images of poodles, fried chickens, and muffins. For feature extraction method, we used HOG because it is easy to understand and much faster than SIFT and GIST. For classification methods, we tried Xgboost, SVM with linear and RBF kernels, Logistic Regression, Neural Networks and Random Forest. And in the end, we chose HOG and the majority vote of svm_rbf, logistic regression, and xgboost as our final (advanced) model.
 
 Step 0: Install packages and specify directories:
 
 In this step, we check whether the needed packages are correctly installed and then set the path for training and testing data. 
 ```{r,warning=FALSE,message=FALSE}
-packages.used=c("e1071","EBImage","OpenImageR","xgboost","ggplot2","gbm","tidyr")
+packages.used=c("e1071","EBImage","OpenImageR","xgboost","ggplot2","gbm","tidyr", "nnet")
 packages.needed=setdiff(packages.used, intersect(installed.packages()[,1], packages.used))
 if(length(packages.needed)>0){
   install.packages(packages.needed, dependencies = TRUE)
 }
-
+library(nnet)
 library(OpenImageR)
 library(gbm)
 library(EBImage)
@@ -190,23 +190,12 @@ if (run.cv){
     cat("The \'best\' gamma for svm_RBF =",svm_rbf.para$gamma,"\n")
     
     
-    ## parameters for svm_linear
-    par.list = list(cost = c(0.1,1,3,5,8,10,50,100))
-    res_linear <- cv.svm_linear(dat_train, par.list, K)
-    svm_linear.para <- res_linear$best.par
-    
-    save(res_linear, file = "../output/svmLinear_err_cv.Rdata")
-    # Print the Cross-Validation Error for the chosen Model:
-    cat("The Cross Validation Error for svm_linear =", res_linear$smallest.cv_error,"\n")
-    cat("The \'best\' cost for svm_linear =",svm_linear.para$cost,"\n")
-    
-    
     ## parameters for Logistic
     iter_values <- seq(10,220,30)
     err_cv <- array(dim=c(length(iter_values), 2))
     for(k in 1:length(iter_values)){
       cat("k=", k, "\n")
-      err_cv[k,] <- cv.function(dat_train, par=list(maxit=iter_values[k]), K)
+      err_cv[k,] <- cv.lg(dat_train, par=list(maxit=iter_values[k]), K)
     }
     save(err_cv, file = "../output/logistic_err_cv.Rdata")
     # best parameters for Logistic
@@ -233,9 +222,6 @@ if (run.cv){
       
       fit.rbf = train.svm_rbf(train.data, svm_rbf.para)
       pred.rbf = test.svm_rbf(fit.rbf, data.test)
-      
-      #fit.linear = train.svm_linear(train.data, svm_linear.para)
-      #pred.linear = test.svm_linear(fit.linear, data.test)
       
       fit.lg = train.lg(train.data, lg.para)
       pred.lg = test.lg(fit.lg, data.test)
@@ -303,7 +289,6 @@ if (!Baseline){
     ##Train the model using the best parameters chosen by cross validation:
     tm_train_xgb <- system.time(fit_train_xgb <- train.xgb(dat_train,xgb.para))
     tm_train_rbf <- system.time(fit_train_rbf <- train.svm_rbf(dat_train, svm_rbf.para))
-    #tm_train_lin <- system.time(fit_train_lin <- train.svm_linear(dat_train, svm_linear.para))
     tm_train_lg  <- system.time(fit_train_lg <- train.lg(dat_train, lg.para))
 
   } else {
@@ -314,13 +299,11 @@ if (!Baseline){
                       min_child_weight = 6.6,
                       subsample = 0.6)
     svm_rbf.para1 <- list(cost=10, gamma=100)
-    #svm_linear.para1 <- list(cost = 100)
     lg.para1 <- list(maxit=190)
     
     ##Train the model:
     tm_train_xgb <- system.time(fit_train_xgb <- train.xgb(dat_train,xgb.para1))
     tm_train_rbf <- system.time(fit_train_rbf <- train.svm_rbf(dat_train, svm_rbf.para1))
-    #tm_train_lin <- system.time(fit_train_lin <- train.svm_linear(dat_train, svm_linear.para1))
     tm_train_lg  <- system.time(fit_train_lg <- train.lg(dat_train, lg.para1))
 
     cat("We don't have the CV error based on the user's selection")
@@ -329,7 +312,7 @@ if (!Baseline){
   ##Save the model:
   save(fit_train_xgb, file="../output/fit_train_xgb.RData")
   save(fit_train_rbf, file="../output/fit_train_rbf.RData")
-  save(fit_train_lin, file="../output/fit_train_lg.RData")
+  save(fit_train_lg, file="../output/fit_train_lg.RData")
 }
 
   
@@ -356,7 +339,6 @@ if (!Baseline){
   ##Get the test accuracy:
  pre_test.xgb<-test.xgb(fit_train_xgb, dat_test[,-1])
  pre_test.rbf<-test.svm_rbf(fit_train_rbf, dat_test[,-1])
- #pre_test.lin<-test.svm_linear(fit_train_lin, dat_test[,-1])
  pre_test.lg <- test.lg(fit_train_lg, dat_test[, -1])
  com <- cbind(pre_test.xgb, as.numeric(pre_test.rbf)-1, as.numeric(pre_test.lg)-1)
  pre_test_adv = as.numeric(sapply(apply(com,1,table),function(x){names(which.max(x))}))

@@ -39,23 +39,6 @@ cv.svm_rbf <- function(dat_train, par.ranges, K){
 }
 
 
-cv.svm_linear <- function(dat_train, par.ranges, K){
-  # tune svm with multiple classes using the one-versus-one approach
-  tune.out = tune(svm, train.x = dat_train[, -1], train.y = dat_train[, 1], 
-                  kernel = "linear",
-                  scale = FALSE, 
-                  ranges = par.ranges, 
-                  tunecontrol = tune.control(cross = K))
-  
-  best.para = tune.out$best.parameters 
-  smallest.cv_error = tune.out$best.performance
-  performance.tune <- tune.out$performances
-  
-  return(list(best.par = best.para, 
-              smallest.cv_error = smallest.cv_error, 
-              performances = performance.tune))
-}
-
 cv.xgb <- function(dat_train, K, par){
   
   xgb <- xgb.cv(data = data.matrix(dat_train[, -1]),
@@ -80,7 +63,7 @@ cv.xgb <- function(dat_train, K, par){
 }
 
 
-cv.function <- function(dat_train, par, K){
+cv.lg <- function(dat_train, par, K){
   
   n <- dim(dat_train)[1]
   n.fold <- floor(n/K)

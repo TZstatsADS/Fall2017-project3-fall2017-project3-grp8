@@ -40,26 +40,6 @@ test.svm_rbf <- function(fit_train, data.test){
 
 
 
-test.svm_linear <- function(fit_train, data.test){
-  
-  ### Fit the svm_linear model with testing data
-  
-  ### Input: 
-  ###  - the fitted svm_linear model using training data
-  ###  -  processed features from testing images 
-  ### Output: prediction labels
-  
-  ### load libraries
-  library("e1071")
-  pred <- predict(fit_train, data.test)
-  
-  return(pred)
-}
-
-
-
-
-
 test.xgb <- function(fit_train, data.test){
   
   ### Fit the Xgboost model with testing data
