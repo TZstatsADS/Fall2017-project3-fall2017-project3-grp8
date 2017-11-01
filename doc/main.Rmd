@@ -121,7 +121,7 @@ dat_test <- dat[-idx, ]
 Step 4: Train classification models with training images.
 Step 4.1 : Model selection with cross-validation:
 Do model selection by choosing among different values of training model parameters.
-```{r}
+```{r,warning=FALSE}
 if (run.cv){
   if (!Baseline){  ##We do CV for candidates in the Advanced Model
     
