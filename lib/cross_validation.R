@@ -78,3 +78,26 @@ cv.xgb <- function(dat_train, K, par){
   cv.sd <- xgb$evaluation_log[iter, ]$test_merror_std
   return (list(iter = iter, cv_error = cv.err, cv_sd = cv.sd))
 }
+
+
+cv.function <- function(dat_train, par, K){
+  
+  n <- dim(dat_train)[1]
+  n.fold <- floor(n/K)
+  s <- sample(rep(1:K, c(rep(n.fold, K-1), n-(K-1)*n.fold)))  
+  cv.error <- rep(NA, K)
+  
+  for (i in 1:K){
+    
+    train.data <- dat_train[s != i,]
+    data.test <- dat_train[s == i, -1]
+    y.test <- dat_train[s == i, 1]
+    
+    fit_log <- train.lg(train.data, par)
+    pred <- test.lg(fit_log, data.test)  
+    cv.error[i] <- mean(pred != y.test)  
+    
+  }			
+  return(c(mean(cv.error),sd(cv.error)))
+  
+}

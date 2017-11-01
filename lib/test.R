@@ -78,7 +78,7 @@ test.xgb <- function(fit_train, data.test){
 }
 
 
-test.lg <- function(fit_train, dat_test){
+test.lg <- function(fit_train, data.test){
   
   ### Fit the classfication model with testing data
   
@@ -90,7 +90,7 @@ test.lg <- function(fit_train, dat_test){
   ### load libraries
   library("nnet")
   
-  pred <- predict(fit_train, dat_test)
+  pred <- predict(fit_train, data.test)
   
   return(pred)
 }
