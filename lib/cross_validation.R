@@ -59,7 +59,7 @@ cv.svm_linear <- function(dat_train, par.ranges, K){
 cv.xgb <- function(dat_train, K, par){
   
   xgb <- xgb.cv(data = data.matrix(dat_train[, -1]),
-                label = dat_train[, 1],
+                label = as.numeric(dat_train[, 1]) -1,
                 eta = par$eta,
                 max_depth = par$max_depth,
                 nrounds = 100,

@@ -128,7 +128,7 @@ train.xgb <- function(train.data, par){
     }
   
   fit_xgb <- xgboost(data = data.matrix(train.data[, -1]),
-                     label = train.data[, 1],
+                     label = as.numeric(train.data[, 1]) - 1,
                      nrounds = 100,
                      max_depth = max_depth,
                      eta = eta,
