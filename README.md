@@ -23,7 +23,7 @@ Term: Fall 2017
 Part of the project each member is responsible for:
    
 	Shiqi Duan (project leader): Feature Extraction, Logistic Regression, 
-                RBF kernel SVM and Random Forest on HOG features, Main File Construction
+                                 RBF kernel SVM and Random Forest on HOG features, Main File Construction
 
 	Jordan Leung (major contributor): XgBoost, Main File Construction, Project Presentation
 
